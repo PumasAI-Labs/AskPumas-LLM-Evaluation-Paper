@@ -1,0 +1,43 @@
+Criteria,Benchmark Context,Band 1,Band 2,Band 3,Total Score
+Relevance,Is the answer relevant to the question asked?,"(17-20 points)
+The answer is directly relevant to the question asked. 
+Addresses the main points and subpoints of the question. 
+No off-topic information is included.","(10-16 points)
+The answer is mostly relevant to the question. 
+Covers some main points but may miss some subpoints. 
+Minor off-topic information may be included.","(0-9 points)
+The answer is not relevant or only partially relevant to the question. 
+Misses most of the main points and subpoints. 
+Includes significant off-topic information.",20
+Comprehensiveness,Does the answer cover all aspects of the question completely?,"(20-25 points)
+The answer covers all aspects of the question completely.
+Provides thorough and exhaustive coverage of the topic.
+Includes all necessary information and details.","(10-19 points)
+The answer covers the main aspects of the question but not completely.
+Provides adequate but not exhaustive coverage of the topic.
+Some necessary information or details may be missing.","(0-9 points)
+The answer covers few or none of the aspects of the question.
+Provides insufficient coverage of the topic.
+Many necessary information or details are missing.",25
+Clarity and Coherence,"Is the answer clearly written and easy to understand? 
+Does it follow a logical structure?","(20-25 points)
+The answer is clearly written and easy to understand.
+Follows a logical structure with well-organized content.
+Free from grammatical and spelling errors.","(10-19 points)
+The answer is generally clear but may have minor issues affecting understanding.
+Follows a mostly logical structure with some organizational issues.
+Contains minor grammatical or spelling errors.","(0-9 points)
+The answer is unclear or difficult to understand.
+Lacks logical structure and organization.
+Contains significant grammatical or spelling errors.",25
+Depth and Detail,"Does the answer provide sufficient detail and depth? 
+Does it address the nuances of the question?","(25-30 points)
+The answer provides sufficient detail and depth.
+Addresses the nuances of the question thoroughly.
+Uses examples, explanations, or elaborations.","(15-24 points)
+The answer provides some detail and depth but is not thorough.
+Addresses some nuances of the question but not all.
+Includes some examples and explanations but lacks elaboration.","(0-14 points)
+The answer lacks sufficient detail and depth.
+Does not address the nuances of the question.
+Lacks examples, explanations, and elaborations.",30

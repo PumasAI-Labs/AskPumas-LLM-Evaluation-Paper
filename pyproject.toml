@@ -1,0 +1,23 @@
+[project]
+name = "llmexplore"
+version = "0.1.0"
+description = "LLM exploration and evaluation for AskPumas"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=3.0.2",
+    "jinja2>=3.1.2",
+    "langchain>=0.3.4",
+    "nltk>=3.9.1",
+    "openai>=1.52.2",
+    "pandas>=2.2.3",
+    "python-dotenv>=1.0.1",
+    "ragas>=0.2.3",
+    "tqdm>=4.66.6",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.7",
+    "numpy>=1.26.4",
+    "pandas>=2.2.3",
+    "tabulate>=0.9.0"
+]
+

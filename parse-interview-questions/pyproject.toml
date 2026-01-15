@@ -1,0 +1,11 @@
+[project]
+name = "parse-interview-questions"
+version = "0.1.0"
+description = "Parse interview transcripts and generate questions using GPT"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.42.0",
+    "python-dotenv>=1.0.1",
+    "spire-doc>=12.7.1",
+    "tqdm>=4.66.5",
+]

@@ -1,0 +1,37 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.uv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Quarto
+_site/
+.quarto/
+*.html
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Confidential prompt file
+prompts.csv
+# Responses
+multillm.csv
+# Generated ragas files
+ragas-results/*.csv
+# keep the example ragas file in source control
+!ragas-results/ragas_evaluation.example.csv

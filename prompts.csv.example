@@ -1,0 +1,2 @@
+question,question_context
+"your question","# Role and Objective\n- Provide an answer using only the provided resources (placeholder)\n\n# Instructions\n- If the context is insufficient, state you cannot answer.\n\nInformation from the resources provided:\n@@@\n<your resource snippets here>\n///"
