@@ -9,7 +9,7 @@ format:
   pdf:
     fig-pos: "H"
     tbl-pos: "H"
-    toc: true
+    toc: false
     highlight-style: github
     link-citations: true  
     link-bibliography: true 
@@ -20,7 +20,7 @@ bibliography: references.bib
 bibliographystyle: apa
 ---
 
-# Abstract {#sec-abstract}
+# Abstract {.unnumbered #sec-abstract}
 
 The Large Language Model (LLM) landscape is constantly changing, with new models emerging rapidly and outperforming established benchmarks. For professionals working on LLM applications, this means constantly being aware of top-performing LLMs that can replace current LLMs in their internal AI applications; an LLM that is considered the optimal choice in a scientist's current AI architecture cannot be assumed to remain the optimal choice as models constantly evolve. At PumasAI, while building AskPumas, a Retrieval Augmented Generation (RAG) based AI chat assistant focused on Pumas and pharmacometric-related inquiries, we noticed the importance of finding a structure to assess numerous LLMs. The motivation behind this research is to establish a framework to evaluate LLMs and select and rank them based on different criteria. This paper will explore the methodologies of our evaluation criteria, how this has served in helping select the ideal LLM for AskPumas, and how our established framework can serve as a guide for developers who seek to find the optimal LLM for their domain-specific AI application. Using this framework, we identified `gpt-5-chat`, `gemini` models, `qwen3-max`, and `grok-4-fast` as top-performing LLMs for AskPumas. The differences among the highest-ranked models are small (~1-2%), suggesting that we identified sets of strong candidates for AskPumas, rather than a single definitive winner. Overall, we conclude that model selection for domain RAG applications should be treated as a modular process that considers trade-offs between metric weights and insights from embedding-based clustering, so AskPumas can adapt its priorities as the LLM landscape evolves.
 
@@ -313,6 +313,8 @@ In addition, the clustering results plotted along with our evaluation methods (f
 From these plots, we observe that the Cluster G models have higher answer relevancy and LLM rubric scores but lower faithfulness than yellow (see @fig-graph-1, @fig-graph-2). These models are willing to give on-topic answers, but they are prone to not interpret and apply the provided context in their outputs. A representative model that shows this behavior in our rubric is `mistral-medium-3.1` - it has a high answer relevancy score and LLM rubric score, but one of the lowest faithfulness scores (see @tbl-results).
 
 Alternatively, we observe that Cluster Y models have higher faithfulness scores but somewhat lower answer relevancy and LLM rubric scores (see @fig-graph-1, @fig-graph-2). These models stay closer to the context and are more conservative. This implies that sometimes, they are not answering the question fully or are not direct. A representative model that shows this behavior in our evaluation is `gemini-2.5-flash` - it has the highest faithfulness score out of any other model but does not have relatively high answer relevancy or LLM rubric scores, thus reducing its average score (see @tbl-results).
+
+The code for this evaluation framework is available at [https://github.com/PumasAI-Labs/AskPumas-LLM-Evaluation-Paper](https://github.com/PumasAI-Labs/AskPumas-LLM-Evaluation-Paper).
 
 # Discussion {#sec-discussion}
 
