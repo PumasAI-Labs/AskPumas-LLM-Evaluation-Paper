@@ -28,7 +28,7 @@ The Large Language Model (LLM) landscape is constantly changing, with new models
 
 At PumasAI, the AI assistant AskPumas is a highly extensible RAG [@lewis2021retrievalaugmentedgenerationknowledgeintensivenlp] system, focused on helping users of Pumas™ [@rackauckas2020accelerated] and DeepPumas™ [@korsbo2023deeppumas] perform their work more efficiently. A RAG system enhances performance tasks by utilizing curated private sources, unlike LLM training data, which is static and cannot access proprietary data. This enables AskPumas to have accurate outputs representative of topics from the provided data. For this context, we have developed a structured methodology tailored specifically for a RAG system that helps us confidently determine ideal and reliable LLM choices suitable for AskPumas. Since each AI application has its own requirements and needs, scientists can adopt our reproducible methodology to evaluate and select LLMs with their own use case, architecture, and constraints. 
   
-Choosing the correct LLM for a RAG system should not be an arbitrary selection. There are a range of factors to consider, such as size, purpose, license, and implementation. For instance, some LLMs can be self-hosted, which ensures compliance and data privacy, whereas API based LLMs are easier to integrate and can be a more cost-efficient option (see @sec-appendix-all-llms). Having established these trade-offs, our standardized benchmarking allows us to directly compare LLMs and rank them against each other.  
+Choosing the correct LLM for a RAG system should not be an arbitrary selection. There are a range of factors to consider, such as size, purpose, license, and implementation. For instance, some LLMs can be self-hosted, which ensures compliance and data privacy, whereas API based LLMs are easier to integrate and can be a more cost-efficient option (see [Appendix A](#sec-appendix-all-llms)). Having established these trade-offs, our standardized benchmarking allows us to directly compare LLMs and rank them against each other.  
   
 However, existing evaluations and benchmarks such as Holistic Evaluation of Language Models (HELM) [@liang2023holistic] and Massive Multitask Language Understanding Pro (MMLU-Pro) [@wang2024mmluprorobustchallengingmultitask] do not explore the abilities of LLMs in the context of the RAG system. LLMs in RAG need to effectively identify key information from retrieved contexts. For instance, noise robustness, negative rejection, information integration, and counterfactual robustness are fundamental abilities required in RAG, emphasized in previous work [@chen2023benchmarkinglargelanguagemodels], which are not considered in generalized benchmarks. Beyond these general benchmarks, recent work such as Comprehensive RAG Benchmark (CRAG) focuses on a comprehensive RAG benchmarking, further highlighting the need for RAG-specific evaluation benchmarks [@yang2024cragcomprehensiverag] and systemic reviews of RAG systems to enhance domain specific knowledge in LLMs [@murtiyoso2025]. Our contribution poses a methodology tailored to a RAG system for private pharmacometric data to identify top-performing LLMs for AskPumas. 
 
@@ -40,8 +40,8 @@ In this section, we explore the methodology used to evaluate various LLMs for a 
 ## Exploring LLMs {#sec-exploring-llms}
 
 When exploring different LLMs for a RAG application, it is important to understand the needs of the architecture. There are numerous LLMs to choose from; when making an extensive list, having fixed factors can help select suitable LLMs based on the scope and needs of the architecture. For example, for the AI assistant AskPumas, we prioritized chat models that can be accessed via an API (such as `gpt-5-chat` and `claude-sonnet-4.5`) and some models that have the option to be self-hosted as well (such as `mistral-small-3.2-24b-instruct` and `gemma-3-12b-it`); as a scientist, it is crucial to select the right model, based on your use case, computing resources, and budget.   
-  
-To analyze prospective LLMs, we created a wide range of fixed factors that need to be considered, based on the LLM’s abilities, feasibility, practicality, and robustness. Having fixed factors allows a scientist to have a strong reason to select a specific model over a different one. Using these factors as a guide, we selected 19 different LLMs that match our system’s needs - having a comprehensive method allowed us to select the correct model with confidence and methodical rigor:
+
+To analyze prospective LLMs, we created a wide range of fixed factors that need to be considered, based on the LLM’s abilities, feasibility, practicality, and robustness. Having fixed factors allows a scientist to have a strong reason to select a specific model over another. Using these factors as a guide, we surveyed LLM providers such as OpenAI, Google, Anthropic, Mistral AI, xAI, DeepSeek, Meta, Microsoft, Alibaba, and Zhipu AI to identify candidate models. From these, we selected 19 LLMs that matched our system’s needs. Having a comprehensive method allowed us to select the correct model with confidence and methodical rigor.
 
 **Model Size.** The model's size in terms of parameters can significantly affect its overall performance. Larger models can have the capacity to interpret complex query inputs, though, it can be computationally costly. On the other hand, smaller models can sacrifice performance for better efficiency. It is important to compare the trade-off between the size of the model and its performance - this heavily depends on the scope of the scientist's application.  
 
@@ -66,13 +66,15 @@ There are certain situations where it can be practical to use API based models i
 
 ## Establishment of a Prompt Repository {#sec-prompt-repository}
 
-Before implementing the benchmarking pipeline, we assembled a curated collection of 181 prompts representing common pharmacometric-related questions. Having an established prompt repository helps us compare the outputs of numerous LLMs in a more standardized approach. Since each LLM gives a different output in a unique way, creating a prompt repository of 181 prompts enabled us to systematically evaluate and benchmark model responses across different scenarios.    
+Before implementing the benchmarking pipeline, we assembled a curated collection of 181 prompts representing common pharmacometric-related questions. These prompts were straightforward single-sentence questions, representative of how users interact with AskPumas. Having an established prompt repository helps us compare the outputs of numerous LLMs in a more standardized approach. Since each LLM gives a different output in a unique way, creating a prompt repository of 181 prompts enabled us to systematically evaluate and benchmark model responses across different scenarios.    
    
 We aimed to evaluate our chosen LLMs based on practical questions related to pharmacometrics, PumasAI products, or Julia that users at PumasAI might have. To achieve this, we recorded and transcribed interviews with six expert scientists at PumasAI, who helped us identify different kinds of prompts. We instructed them to generate both qualitative and quantitative prompts to create diversity in our prompt repository. Asking different scientists with different specialties and thought processes helped make our prompt repository deep and comprehensive.  
   
-We found that to surf through all our 6 recorded transcribed interviews to pinpoint specific prompts was extremely time-consuming. Further, to streamline this process, we employed an LLM to help us extract prompts directly from the transcribed interviews. By running Python scripts in combination with OpenAI’s `gpt-4o`, we extracted over 600 potential prompts. To account for variability, we ran the model multiple times with different temperature settings: 0, 0.05, 1.0, 1.15, and 2.0. Changing this hyperparameter generated unique questions based on the insights from the interviews, making our prompts diverse. 
+We found that sifting through all our 6 recorded transcribed interviews to pinpoint specific prompts was extremely time-consuming. Further, to streamline this process, we employed an LLM to help us extract prompts directly from the transcribed interviews. By running Python scripts in combination with OpenAI’s `gpt-4o`, which was one of the leading models at the time [@openai_gpt4o], we extracted over 600 potential prompts. To account for variability, we ran the model multiple times with different temperature settings: 0, 0.05, 1.0, 1.15, and 2.0. Changing this hyperparameter generated unique questions based on the insights from the interviews, making our prompts diverse. 
 
-From these 600 prompts, we narrowed our prompt repository to 145 unique prompts through the process of elimination. This involved carefully selecting prompts that create a well-balanced prompt repository. Our choice of exactly 145 prompts was not intentional; rather, it was a result of our systematic manual filtering process for relevance in the pharmacometric domain. Within this set of 145 prompts, we also included a subset of 14 questions, where the retrieved context does not have the information required to answer the question. These 14 prompts are unaswerable by design to test answer rejection of the LLM, which is the model's ability to refuse to answer when complete or correct information is not present in the retrieved context provided (see @sec-answer-rejection).
+From these 600 prompts, we narrowed our prompt repository to 145 unique prompts through the process of elimination. This involved carefully selecting prompts that created a well-balanced prompt repository across topic areas such as Pumas, Julia, and pharmacometrics, which avoided over-representation of any single topic area. We also removed duplicates, similar prompts, and ambiguous or malformed questions that arose across temperature runs. Our choice of exactly 145 prompts was not intentional; rather, it was a result of our systematic manual filtering process for relevance in the pharmacometric domain.
+
+Within this set of 145 prompts, we also included a subset of 14 questions, where the retrieved context does not have the information required to answer the question. These 14 prompts are unanswerable by design to test answer rejection of the LLM, which is the model's ability to refuse to answer when complete or correct information is not present in the retrieved context provided (see @sec-answer-rejection).
 
 In addition to the prompts generated from interviews, we also leveraged real prompts posed by PumasAI users to AskPumas. We first anonymized all logged prompts by removing any notable user identifiers and sensitive information, ensuring that no user data was visible. From this anonymized pool of prompts, we carefully selected 36 unique prompts that were relevant to incorporate into our prompt repository. Utilizing these real-world questions in our repository made it comprehensive in nature, as it was representative of how AskPumas is currently being used by users.
 
@@ -83,7 +85,7 @@ Combining the 145 interview based prompts with the 36 PumasAI customer prompts y
 
 After the selection of 19 models in the exploration stage, we decided to manually verify whether the output of all these LLMs is up to our standards for AskPumas. By running these models individually, we gauged the overall strength of the LLM and its potential to answer domain-specific questions in pharmacometrics. The primary purpose of the human vetting process allowed us to filter out prospective models that had little to no potential early on, before proceeding with more rigorous evaluation methods. Doing this initial step helps eliminate models that output low-quality results or have significant restrictions or limitations. 
 
-During this process, we ended up eliminating a total of 2 LLMs, resulting in a shortened shortlist of 17 models (see @sec-appendix-all-llms). Since AskPumas is a RAG-based architecture, some of the 19 LLMs in our shortlist were unable to perform adequately in this setup. When considering models for your own AI application before evaluation, consider using this vetting process as a tool to help understand what kind of LLM you are looking for. By understanding the requirements you need from an LLMs you will be more aware of the limitations of different LLMs, helping you make a more informed decision in your shortlist. Finally, you can eliminate LLMs that do not adhere to the quality and needs of your AI application. The two models we eliminated are Meta's `llama-3.3-8b-instruct` and Microsoft’s `phi-4` (see @sec-appendix-all-llms). The former required some outputs to have authentication and approval from Meta’s end, which complicated our evaluation. The latter quickly capped off input token limits from the relatively large retrieved context we provided, showing that it cannot handle our large context window. 
+During this process, we ended up eliminating a total of 2 LLMs, resulting in a shortened shortlist of 17 models (see [Appendix A](#sec-appendix-all-llms)). Since AskPumas is a RAG-based architecture, some of the 19 LLMs in our shortlist were unable to perform adequately in this setup. When considering models for your own AI application before evaluation, consider using this vetting process as a tool to help understand what kind of LLM you are looking for. By understanding the requirements you need from an LLMs you will be more aware of the limitations of different LLMs, helping you make a more informed decision in your shortlist. Finally, you can eliminate LLMs that do not adhere to the quality and needs of your AI application. The two models we eliminated are Meta's `llama-3.3-8b-instruct` and Microsoft’s `phi-4` (see [Appendix A](#sec-appendix-all-llms)). The former required some outputs to have authentication and approval from Meta’s end, which complicated our evaluation. The latter quickly capped off input token limits from the relatively large retrieved context we provided, showing that it cannot handle our large context window. 
 
 ## Generating LLM Outputs {#sec-generating-llm-outputs}
 
@@ -93,7 +95,8 @@ Before formal evaluation, we generated outputs of our shortlisted 17 LLMs for al
 
 After generating all LLM outputs, we proceed with formal evaluation. Our first evaluation criterion employs RAGAS [@es2025ragasautomatedevaluationretrieval], a Python library that provides strong tools helping users evaluate their RAG models. This automated method generates a quantitative score on a scale of 0 to 1, evaluating the LLM's fairness and accuracy. By utilizing RAGAS [@es2025ragasautomatedevaluationretrieval], we obtained an objective method of comparison across all 17 LLMs, providing our evaluation pipeline with consistent and standardized measurements for comparison. 
 
-RAGAS offers numerous tools for evaluation; we chose two metrics that were the most relevant to us: **Faithfulness** and **Answer Relevancy**.
+We chose two metrics from RAGAS: 
+**Faithfulness** and **Answer Relevancy**.
 
 ### Faithfulness {#sec-ragas-faithfulness}
 
@@ -128,7 +131,7 @@ RAGAS takes in three inputs: the prompts posed to the LLM (prompt repository), t
 
 ## LLM Rubric – Grading Output with Assistance from Another LLM {#sec-llm-rubric}
 
-The second evaluation method incorporates the use of an external LLM, specifically OpenAI’s `gpt-5-mini`, to grade all generated outputs of our 17 LLMs. This provides an additional quantitative metric, which is a valuable secondary score in addition to RAGAS. To achieve this, we decided to create an extensive rubric, which is provided as context to the external LLM that grades the outputs . Using a rubric makes this method of evaluation standardized, as the external LLM can objectively grade generated outputs consistently (see @tbl-rubric). This objective method of evaluation is sensitive in nature as it penalizes models by assigning lower scores to outputs that are not up to a certain standard; for instance, the output lacks adequate depth, or the output is not relevant to the given prompt.  
+The second evaluation method incorporates the use of an external LLM to grade all generated outputs of our 17 LLMs. This provides an additional quantitative metric, which is a valuable secondary score in addition to RAGAS. To achieve this, we decided to create an extensive rubric, which is provided as context to the external LLM that grades the outputs. Using a rubric makes this method of evaluation standardized, as the external LLM can objectively grade generated outputs consistently (see @tbl-rubric). This objective method of evaluation is sensitive in nature as it penalizes models by assigning lower scores to outputs that are not up to a certain standard; for instance, the output lacks adequate depth, or the output is not relevant to the given prompt.  
 
 `{\tiny`{=latex}
 ```{python}
@@ -142,7 +145,9 @@ display(Markdown(rubric.to_markdown(index=False, numalign="right", stralign="lef
 
 `}`{=latex}
 
-We also created 3 different bands of scores for each category, with each band having specific descriptions about the expected quality of the answer to attain that score. Creating these bands allowed the external LLM to easily judge the generated output with a high level of granularity. For instance, consider the comprehensiveness category in our rubric (see @tbl-rubric). Here, if the generated output covers all parts of the question, then the external LLM will assign a grade according to Band 1. If the generated output misses some parts of the question, then the external LLM will assign a grade according to Band 2. Creating these microinstructions for the LLM from a detailed bottom-up design significantly helps the LLM understand how to grade outputs according to our rubric criteria. This method leveraged the power of the LLM to sort through and objectively grade around ~3000 outputs.  
+We selected OpenAI's `gpt-5-mini` as the external LLM grader because it is designed for cost sensitive, low latency, high volume workloads workloads [@openai_gpt5_developers]. This makes it ideal for evaluating around ~3000 LLM outputs efficiently and within budget.
+
+For our rubric, we had 3 different bands of scores for each category, with each band having specific descriptions about the expected quality of the answer to attain that score (see @tbl-rubric). Creating these bands allowed the external LLM to easily judge the generated output with a high level of granularity. For instance, consider the comprehensiveness category in our rubric (see @tbl-rubric). Here, if the generated output covers all parts of the question, then the external LLM will assign a grade according to Band 1. If the generated output misses some parts of the question, then the external LLM will assign a grade according to Band 2. Creating these microinstructions for the LLM from a detailed bottom-up design significantly helps the LLM understand how to grade outputs according to our rubric criteria. This method leveraged the power of the LLM to sort through and objectively grade all LLM outputs.
 
 ## Answer Rejection on Unanswerable Prompts {#sec-answer-rejection}
 
@@ -160,7 +165,7 @@ These scores override all three evaluation metrics: faithfulness, answer relevan
 
 After our two evaluation methods and generating three quantitative scores of Faithfulness, Answer Relevancy, and LLM rubric, we were able to compare model outputs using a fixed prompt repository. However, we wanted to go beyond our prompt-based evaluation - to deepen our analysis and gain more valuable insights. We wanted to directly examine the relationship between all LLM outputs amongst each other. Hence, we utilized the k-medoids clustering algorithm – a method to see the similarity and differences between LLM outputs across all LLMs.
 
-First, we converted all 181 outputs of each LLM in our 17 LLM shortlist to vector embeddings. This transformation enabled us to represent text outputs (string format) as vectors, which is required for the k-medoids clustering algorithm. We converted each output to a vector embedding using OpenAI’s `text-embedding-3-small` model. Then, we used these embeddings to compute a $17 \times 17$ pairwise distance matrix $D$ (see [Eq. @eq-distance_matrix]), based on the cosine distance between our vectors.
+First, we converted all 181 outputs of each LLM in our 17 LLM shortlist to vector embeddings. This transformation enabled us to represent text outputs (string format) as vectors, which is required for the k-medoids clustering algorithm. We then converted each output to a vector embedding and used these embeddings to compute a $17 \times 17$ pairwise distance matrix $D$ (see [Eq. @eq-distance_matrix]), based on the cosine distance between our vectors.
 
 Each entry in matrix $D$ is the average cosine distance value between the $i$-th and $j$-th vector embeddings $v$, where $i$ and $j$ represent two different LLMs, for all $k = 1, 2, 3, \dots, 181$ representing each prompt. Here, the `cosine_distance` function is calculated as $1 - \text{cosine similarity}$ between two vectors of different LLMs for the same prompt. Finally, the pairwise distance matrix $D$ was our input for the k-medoids clustering algorithm.
 
@@ -177,6 +182,10 @@ $${#eq-distance_matrix}
 
 where $K = 181$, which is the number of prompts.
 
+To convert each output into a vector embedding, we used OpenAI's `text-embedding-3-small` model. We selected this embedding model to match the one used in AskPumas's RAG pipeline. Since retrieval from the vector database in AskPumas is based on cosine similarity in the embedding space, using the same embedding model ensures that our clustering analysis is consistent with AskPumas's retrieval behaviour. 
+
+We selected k-medoids as the clustering algorithm for several reasons. First, $D$ is a precomputed pairwise cosine distance matrix (see [Eq. @eq-distance_matrix]); since k-means cannot be directly applied to $D$, k-medoids is the appropriate choice. Second, k-medoids is more robust to outliers. This is an important property, given the observed outlier of `gpt-5-mini` (see @sec-discussion). Finally, while hierarchical clustering can also operate on $D$, k-medoids is better aligned with our goal because it produces independent partitions for each $k$, rather than a nested hierarchy.
+
 # Results {#sec-results}
 
  After generating the outputs of all 17 LLMs, we used numerous Python scripts to run each evaluation method (faithfulness, answer relevancy, and the LLM rubric) to produce quantitative metrics for 181 outputs. We then took the average score of all 181 outputs to obtain a single representative score for each LLM. Further, after normalizing the scores, we calculated the total score, which is simply the average of all three metrics (see @tbl-results). Our rankings are presented in descending order based on the LLM’s total score.
@@ -184,7 +193,7 @@ where $K = 181$, which is the number of prompts.
 `{\small`{=latex}
 ```{python}
 #| label: tbl-results 
-#| tbl-cap: "Evaluation Results" 
+#| tbl-cap: "Evaluation results" 
 import pandas as pd 
 from IPython.display import display, Markdown 
 rubric = pd.read_csv("results.csv") 
@@ -251,50 +260,16 @@ ax.set_ylabel("Answer relevancy")
 ax.legend(title="Cluster")
 ```
 
-Finally, we created a table to summarize the clustering results to report, for each cluster, the mean of the models' average scores. This helps us understand how well the clusters seperate models by our evaluation metrics.
 
-- This table displays mean average scores of the three clusters, colored by cluster representation (see @fig-mean-metric-values).
-```{python}
-#| label: fig-mean-metric-values
-#| fig-cap: "Mean metric values by cluster."
-#| fig-pos: "H"
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-results = pd.read_csv("results.csv")
-metrics = ["Average Score"]
-cluster_colors = {"G": "green", "Y": "gold", "B": "blue"}
-cluster_labels = {"G": "Cluster G", "Y": "Cluster Y", "B": "Cluster B"}
-grouped = results.groupby("Cluster")[metrics].mean()
-clusters = ["G", "Y", "B"]
-x = np.arange(len(metrics))
-width = 0.25
-fig, ax = plt.subplots()
-for i, c in enumerate(clusters):
-    ax.bar(
-        x + i*width,
-        grouped.loc[c, metrics],
-        width,
-        label=cluster_labels[c],
-        color=cluster_colors[c],
-    )
-ax.set_xticks([])
-ax.tick_params(axis="x", which="both", bottom=False, top=False, labelbottom=False)
-ax.set_ylabel("Mean score")
-ax.legend(title="Cluster")
-ax.grid(axis="y", alpha=0.3)
-plt.tight_layout()
-```
-
-# Conclusion {#sec-conclusion}
+# Discussion {#sec-discussion}
 
 We observe that the top 5 LLMs for a RAG system for AskPumas, with respect to use cases involving Pumas, Julia, and pharmacometrics, are `gpt-5-chat`, `gemini` models, `qwen3-max`, and `grok-4-fast` (see @tbl-results).
 
-To obtain an overall ranking, we aggregated the three metrics (faithfulness, answer relevancy, and LLM rubric) using an unweighted average (see @sec-results). This is to treat all three dimensions as equally important, which is the primary purpose of choosing these metrics. However, it is important to note that changing these weights would significantly alter the rankings.
+To obtain an overall ranking, we aggregated the three metrics (faithfulness, answer relevancy, and LLM rubric) using an unweighted average (see @sec-results). This is to treat all three dimensions as equally important, which is the primary purpose of choosing these metrics. However, it is important to note that metric weights can be changed. One metric can be prioritized over another by assigning more weight to it, rather than treating them equally. This changes the overall LLM ranking (see [Appendix B](#sec-appendix-weighted-metrics)).
 
 For instance, `gemini-2.5-flash` outperforms `gpt-5-chat` by 13% in faithfulness, though `gpt-5-chat` has a better average score as it scored better in other metrics (see @tbl-results). If faithfulness has more weight, workflows that prefer to emphasize faithfulness in their RAG application would see `gemini-2.5-flash` as a better option than `gpt-5-chat`. This implies that the best model is relative and highly dependent on the use case of the LLM. Having a dynamic evaluation method allows us to consider different metrics, ensuring that model selection for AskPumas best aligns with PumasAI's priorities and goals. This helps in making a more informed decision, rather than relying on a singular metric.
 
-The results show that the difference between each average score is very low. Consider the average scores for `gemini-2.5-flash-lite`, `gemini-2.5-pro`, `gemini-2.5-flash`, and `grok-4-fast`, which are in the top 5 LLMs according to the rankings (see @tbl-results). Scores here have a very small percentage difference of ~ 1% or 2% between consecutive models in our rankings. These differences are minimal; here, we cannot definitively assert that one model is "better" than the next consecutive model in the rankings. All of the top-performing models can be treated in the same tier as compared to lower-scoring models in the rankings of our evaluation metrics. Our table of mean average scores reveals the same, where both Cluster Y and Cluster B have similar mean average scores (see @fig-mean-metric-values). This means we have two styles of strong models, and we should not overinterpret minor percentage differences.
+The results show that the difference between each average score is very low. Consider the average scores for `gemini-2.5-flash-lite`, `gemini-2.5-pro`, `gemini-2.5-flash`, and `grok-4-fast`, which are in the top 5 LLMs according to the rankings (see @tbl-results). Scores here have a very small percentage difference of ~ 1% or 2% between consecutive models in our rankings. These differences are minimal; here, we cannot definitively assert that one model is "better" than the next consecutive model in the rankings. All of the top-performing models can be treated in the same tier as compared to lower-scoring models in the rankings of our evaluation metrics.
 
 Some models can be self-hosted. Running LLMs locally is crucial for data privacy and is an imperative consideration for AskPumas. For example, `deepseek-chat-v3.1` and `mistralai/mistral-small-3.2-24b-instruct` have the highest scores amongst the models that can be self-hosted and can be considered as viable candidates for AskPumas. The choice between a self-hosted and API-based LLM is ultimately dependent on the sensitivity of your data for an AI application. Developers should weigh the trade-offs, such as maintenance, cost, latency, and scalability, which are often overlooked when self-hosting an LLM, and select a suitable model for their application requirements.
 
@@ -316,29 +291,31 @@ Alternatively, we observe that Cluster Y models have higher faithfulness scores 
 
 The code for this evaluation framework is available at [https://github.com/PumasAI-Labs/AskPumas-LLM-Evaluation-Paper](https://github.com/PumasAI-Labs/AskPumas-LLM-Evaluation-Paper).
 
-# Discussion {#sec-discussion}
+# Conclusion {#sec-conclusion}
 
 ## Importance and Use Case
-More than the specific results of our evaluation framework, the methodology presented in this paper serves as a guide for scientists to select a suitable LLM; it certainly helped PumasAI confidently choose an LLM for AskPumas. With the constantly changing landscape of high-performing LLMs, we now have a structured method to consistently evaluate LLMs for a RAG application. Understanding the nuances presented in the paper, including factors to choose the correct LLM, data privacy and compliance, and our evaluation methodology, will help make a more informed decision in a systematic and context-aware approach.
+The methodology has helped PumasAI confidently choose `gpt-5-chat` for AskPumas in December 2025, due to its consistently high performance across all metrics and its highest overall rankings (see @tbl-results). Our evaluation helped us understand the nature of the model. Since `gpt-5-chat` belongs to Cluster G, it excels at producing on-topic answers (see @sec-discussion), with the highest answer relevancy score among all models (see @tbl-results). With the constantly changing landscape of high-performing LLMs, this methodology has a direct impact as it helps PumasAI iteratively evaluate LLMs and maintain answer quality on future AskPumas updates. 
 
-The framework is a modular process where scientists can adopt different parts of the framework to their specific RAG architecture. For instance, in use cases of law and medicine where hallucination is unacceptable, prioritizing answer rejection is crucial (see @sec-answer-rejection). We observed that the performance gap between subsequent LLMs in our evaluation is only ~1-2% (see @tbl-results). This suggests that for domain-specific RAG applications, operational factors such as cost, implementation, and model size outweigh raw benchmark scores (see @sec-exploring-llms).
+More than the specific results of our evaluation framework, the methodology presented in this paper serves as a guide for scientists to select a suitable LLM. Understanding the nuances presented in the paper, including factors to choose the correct LLM, data privacy and compliance, and our evaluation methodology, will help make a decision in a systematic and context-aware approach. The framework is a modular process that allows scientists to adopt different parts of the framework to their specific RAG architecture. For instance, in use cases of law and medicine where hallucination is unacceptable, prioritizing answer rejection is crucial (see @sec-answer-rejection). We observed that the performance gap between subsequent LLMs in our evaluation is only ~1-2% (see @tbl-results). This suggests that for domain-specific RAG applications, operational factors such as cost, implementation, and model size outweigh raw benchmark scores (see @sec-exploring-llms).
 
-Another advantage of our modular approach to evaluation, allows scientists to prioritize LLM selection based on their use cases. Whether selecting an LLM purely by domain-specific average evaluation scores or prioritizing one metric over another, the flexibility of our framework shows that there are many styles of strong models (see @sec-conclusion). This is important for scientists building a RAG architecture, as our research provides an understanding of which metric to prioritize, based on the use case of the application.
+Another advantage of our modular approach to evaluation is that it allows scientists to prioritize LLM selection based on their use cases. Whether selecting an LLM purely by domain-specific average evaluation scores or prioritizing one metric over another, the flexibility of our framework shows that there are many styles of strong models (see @sec-discussion). This is important for scientists building a RAG architecture, as our research provides an understanding of which metric to prioritize, based on the use case of the application.
 
 ## Limitations and Future Work
 While our evaluation method is useful for LLMs integrated into RAG applications, it is important to note that novel methods to retrieve information are being developed. New methods, such as Corrective Retrieval Augmented Generation, can significantly improve the performance of RAG architectures by utilizing a method to assess the overall quality of retrieved documents [@yan2024correctiveretrievalaugmentedgeneration]. Seeing significant upgrades to RAG architectures, including the introduction of autonomous AI agents into RAG pipelines through Agentic RAG [@singh2025agenticretrievalaugmentedgenerationsurvey], our methodology is not tailored to evaluate LLMs in these refined RAG-based architectures. These frameworks will require a different approach than our proposed framework to individually evaluate LLMs and assess them based on the context and use case.
 
 With AskPumas’s RAG architecture evolving over time and upgrading to these more sophisticated, agent-driven architectures, this provides an opportunity for future work to refine our evaluation methodology to assess these upgraded domain-specific RAG architectures. By leveraging our current evaluation methodology, we can create a new framework and apply it to upgraded RAG architectures. Relevant methods in our current methodology for future RAG evaluation frameworks include exploring LLMs (see @sec-exploring-llms), creating a domain-specific prompt repository (see @sec-prompt-repository), and clustering LLMs using the k-medoids algorithm (see @sec-clustering-outputs). By building on our current methodology, we can develop robust evaluation metrics that account for refined RAG architectures such as CRAG and Agentic RAG.
 
+When defining the prompt repository, we used fixed temperature hyperparemeters (0, 0.05, 1.0, 1.15, and 2.0) for `gpt-4o` to extract relevant prompts from transcribed interviews (see @sec-sec-prompt-repository). In the future, we can perform a temperature analysis to see the various prompts that can be generated to explore the impact of the temperature and the style and quality of the prompt. Moreover, the complexity of our prompts can signficantly change what constitues to an adequet answer for AskPumas. Relevant future work can involve categorizing our prompt repository to different styles of questions to see the impact on our evaluation methodology.
 
 # References {#sec-references}
 
 ::: {#refs}
 :::
 
+\newpage
 \appendix
 
-# Selected and Eliminated LLMs {#sec-appendix-all-llms .appendix}
+# Selected and Eliminated LLMs {#sec-appendix-all-llms}
 
 Below, we list all models selected and eliminated for evaluation during the human vetting step (see @sec-human-vetting), along with their implementation method.
 ```{python}
@@ -351,3 +328,44 @@ import pandas as pd
 not_selected_llms = pd.read_csv("eliminated-llms-appendix.csv")
 display(Markdown(not_selected_llms.to_markdown(index=False, stralign="left")))
 ```
+
+# Weighted Metrics {#sec-appendix-weighted-metrics}
+
+In our results (see @tbl-results), we ranked LLMs using an unweighted average, treating faithfulness, answer relevancy, and LLM rubric equally. Below, we explore how rankings change when different weights are assigned to the three metrics, reflecting use cases where one dimension matters more than others. Consider a situation where faithfulness is prioritized over answer relevancy. To achieve this, we assign a higher weight to faithfulness and a lower weight to answer relevancy and LLM rubric (see @eq-weighted-score).
+
+The weighted score for each LLM is computed as:
+
+$$
+S_w = w_F \cdot Faithfulness + w_{AR} \cdot Answer Relevancy + w_{LR} \cdot LLM Rubric,
+$${#eq-weighted-score}
+
+where the weights for the unweighted average are $w_F = \tfrac{1}{3}$, $w_{AR} = \tfrac{1}{3}$, and $w_{LR} = \tfrac{1}{3}$. 
+
+To prioritize the faithfulness metric, we increase $w_F$ and reduce $w_{AR}$ and $w_{LR}$. This can be achieved by assigning $w_F = \tfrac{1}{2}$, $w_{AR} = \tfrac{1}{4}$, and $w_{LR} = \tfrac{1}{4}$, resulting in a different ranking (see @tbl-weighted-rankings). Our rankings are presented in descending order based on the LLM’s total score.
+
+`{\small`{=latex}
+```{python}
+#| label: tbl-weighted-rankings
+#| tbl-cap: "Faithfulness weighted evaluation results"
+import pandas as pd
+from IPython.display import display, Markdown
+results = pd.read_csv("results.csv")
+results["Weighted Score"] = (
+    0.50 * results["Faithfulness"]
+    + 0.25 * results["Answer Relevancy"]
+    + 0.25 * results["LLM Rubric"]
+)
+results = results.sort_values("Weighted Score", ascending=False)
+display_df = results[["Cluster", "Model Name", "Faithfulness", "Answer Relevancy", "LLM Rubric", "Weighted Score"]]
+display(Markdown(display_df.to_markdown(index=False, numalign="right", stralign="left")))
+```
+
+`}`{=latex}
+
+As observed in @tbl-weighted-rankings, the rankings of the top LLMs shift when faithfulness is weighted heavily. Google's `gemini-2.5-flash` ranked highest due to its leading faithfulness score of 0.94. While `grok-4-fast` has the second-highest faithfulness score of 0.90, it ranks fourth in the weighted rankings due to its lackluster performance in other metrics (see @tbl-weighted-rankings). 
+
+Notably, `gpt-5-chat`, which ranked first in the unweighted rankings (see @tbl-results) and third in the faithfulness weighted rankings (see @tbl-weighted-rankings), achieves the same faithfulness score as `claude-haiku-4.5`, which ranked twelfth in the unweighted rankings (see @tbl-results) and eighth in the faithfulness weighted rankings (see @tbl-weighted-rankings). 
+
+In AskPumas, consider a scenario where we require a model that has strong faithfulness scores; the LLM must handle complex pharmacometric tasks while maintaining accuracy and remaining grounded in retrieved pharmacometric contexts. In such a situation, `gpt-5-chat` is a stronger candidate than `claude-haiku-4.5`. Despite sharing the same faithfulness scores, the two models have drastically different positions in observed rankings due to their diverse performance across other metrics. 
+
+These insights further reinforce that model selection should be treated as a modular process. Having a flexible framework allows metric weights to be adjusted to reflect the requirements of the application of the LLM, instead of relying on a single set of rankings.
